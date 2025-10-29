@@ -53,26 +53,26 @@
     </div>
     <div class="about-info" style="flex:1 1 auto;">
         <h1>
-            <input type="text" name="name" value="{{ old('name', $profile->name) }}" placeholder="Your Name" style="width:100%; max-width:420px;" />
+            <input type="text" name="name" value="{{ old('name', $profile->name) }}" placeholder="Your Name" style="width:100%; max-width:420px;" maxlength="80" />
         </h1>
         <p><strong>
-            <input type="text" name="title" value="{{ old('title', $profile->title) }}" placeholder="Your Title (e.g. Full-Stack Developer)" style="width:100%; max-width:420px;" />
+            <input type="text" name="title" value="{{ old('title', $profile->title) }}" placeholder="Your Title (e.g. Full-Stack Developer)" style="width:100%; max-width:170px;" maxlength="100" />
         </strong></p>
         
         <p>
-            <input type="text" name="address" value="{{ old('address', $profile->address) }}" placeholder="City, Country" style="width:100%; max-width:420px;" />
+            <input type="text" name="address" value="{{ old('address', $profile->address) }}" placeholder="City, Country" style="width:100%; max-width:420px;" maxlength="120" />
             <br>
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v2a2 2 0 0 1-2.2 2c-9.2-1-16-7.8-17-17A2 2 0 0 1 4.8 2h2a2 2 0 0 1 2 1.7c.1.9.3 1.8.7 2.7.2.5.1 1.1-.3 1.5L8 9.8a15 15 0 0 0 6.2 6.2l1.9-1.2c.5-.3 1-.4 1.5-.3 1 .3 1.9.6 2.8.7a2 2 0 0 1 1.6 1.6z"></path></svg>
-            <input type="text" name="phone" value="{{ old('phone', $profile->phone) }}" placeholder="Phone" style="max-width:240px;" />
+            <input type="text" name="phone" value="{{ old('phone', $profile->phone) }}" placeholder="Phone" style="max-width:240px;" maxlength="24" />
             |
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"></path><path d="M22 6l-10 7L2 6"/></svg>
-            <input type="email" name="email" value="{{ old('email', $profile->email) }}" placeholder="Email" style="max-width:260px;" />
+            <input type="email" name="email" value="{{ old('email', $profile->email) }}" placeholder="Email" style="max-width:260px;" maxlength="254" />
         </p>
         
         <div style="margin-top:10px;">
             <div style="margin-top:6px; font-size:0.9rem;">
                 <div>Public URL Slug</div>
-                <input type="text" name="slug" value="{{ old('slug', $profile->slug) }}" placeholder="e.g. john-doe" style="max-width:320px;" />
+                <input type="text" name="slug" value="{{ old('slug', $profile->slug) }}" placeholder="e.g. john-doe" style="max-width:320px;" maxlength="60" pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" title="Lowercase letters, numbers and hyphens only (start/end with a letter or number)." />
                 <div style="margin-top:4px;">
                     <small>
                         Public link:
@@ -121,11 +121,11 @@
                         <button type="button" class="btn-icon drag-handle" title="Drag to reorder" aria-label="Drag to reorder" tabindex="0" style="align-self:center;">
                             <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M7 5h0M12 5h0M17 5h0M7 12h0M12 12h0M17 12h0M7 19h0M12 19h0M17 19h0"/></svg>
                         </button>
-                        <input type="text" class="exp-title" placeholder="Title/Role (e.g. Senior Developer)" style="flex:1 1 240px; min-width:220px;" />
-                        <input type="text" class="exp-company" placeholder="Company (e.g. Acme Inc.)" style="flex:1 1 220px; min-width:200px;" />
+                        <input type="text" class="exp-title" placeholder="Title/Role (e.g. Senior Developer)" style="flex:1 1 240px; min-width:220px;" maxlength="100" />
+                        <input type="text" class="exp-company" placeholder="Company (e.g. Acme Inc.)" style="flex:1 1 220px; min-width:200px;" maxlength="100" />
                         <div style="flex:0 0 260px; min-width:220px; display:flex; flex-direction:column; gap:4px;">
                             <div style="display:flex; gap:6px; align-items:center;">
-                                <input type="text" class="exp-period" placeholder="Period (YYYY, YYYY–YYYY, or YYYY–Present)" style="flex:1 1 auto;" />
+                                <input type="text" class="exp-period" placeholder="Period (YYYY, YYYY–YYYY, or YYYY–Present)" style="flex:1 1 auto;" maxlength="25" />
                                 <label style="display:inline-flex; align-items:center; gap:6px; white-space:nowrap;">
                                     <input type="checkbox" class="exp-current" /> Current
                                 </label>
@@ -144,8 +144,8 @@
                             </button>
                         </div>
                     </div>
-                    <input type="text" class="exp-address" placeholder="Address (e.g. City, Country)" />
-                    <input type="text" class="exp-description" placeholder="Description (responsibilities, achievements, tech stack)" />
+                    <input type="text" class="exp-address" placeholder="Address (e.g. City, Country)" maxlength="120" />
+                    <input type="text" class="exp-description" placeholder="Description (responsibilities, achievements, tech stack)" maxlength="300" />
                 </div>
             </template>
             <div id="exp-rows" class="rows"></div>
@@ -197,10 +197,10 @@
                         <button type="button" class="btn-icon drag-handle" title="Drag to reorder" aria-label="Drag to reorder" tabindex="0" style="align-self:center;">
                             <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M7 5h0M12 5h0M17 5h0M7 12h0M12 12h0M17 12h0M7 19h0M12 19h0M17 19h0"/></svg>
                         </button>
-                        <input type="text" class="edu-level" placeholder="Level/Type (e.g. BS Computer Science)" style="flex:1 1 240px; min-width:220px;" />
+                        <input type="text" class="edu-level" placeholder="Level/Type (e.g. BS Computer Science)" style="flex:1 1 240px; min-width:220px;" maxlength="120" />
                         <div style="flex:0 0 260px; min-width:220px; display:flex; flex-direction:column; gap:4px;">
                             <div style="display:flex; gap:6px; align-items:center;">
-                                <input type="text" class="edu-year" placeholder="School Year (YYYY, YYYY–YYYY, or YYYY–Present)" />
+                                <input type="text" class="edu-year" placeholder="School Year (YYYY, YYYY–YYYY, or YYYY–Present)" maxlength="25" />
                                 <label style="display:inline-flex; align-items:center; gap:6px; white-space:nowrap;">
                                     <input type="checkbox" class="edu-current" /> Current
                                 </label>
@@ -219,8 +219,8 @@
                             </button>
                         </div>
                     </div>
-                    <input type="text" class="edu-description" placeholder="Description (e.g. University Name, honors, etc.)" />
-                    <input type="text" class="edu-address" placeholder="Address (e.g. City, Country)" />
+                    <input type="text" class="edu-description" placeholder="Description (e.g. University Name, honors, etc.)" maxlength="300" />
+                    <input type="text" class="edu-address" placeholder="Address (e.g. City, Country)" maxlength="120" />
                 </div>
             </template>
             <div id="edu-rows" class="rows"></div>
@@ -258,7 +258,7 @@
                     <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M7 5h0M12 5h0M17 5h0M7 12h0M12 12h0M17 12h0M7 19h0M12 19h0M17 19h0"/></svg>
                 </button>
                 <div style="flex:2 1 320px; min-width:240px; display:flex; flex-direction:column; gap:4px;">
-                    <input type="text" class="skill-name" placeholder="Skill (e.g. Laravel)" />
+                    <input type="text" class="skill-name" placeholder="Skill (e.g. Laravel)" maxlength="50" />
                     <small class="edu-year-hint" aria-live="polite">Add one skill per row. Drag to reorder.</small>
                 </div>
                 <div class="edu-controls" aria-label="Row controls" style="display:flex; gap:6px; margin-left:auto;">
@@ -310,9 +310,9 @@
                 <button type="button" class="btn-icon drag-handle" title="Drag to reorder" aria-label="Drag to reorder" tabindex="0">
                     <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M7 5h0M12 5h0M17 5h0M7 12h0M12 12h0M17 12h0M7 19h0M12 19h0M17 19h0"/></svg>
                 </button>
-                <input type="text" class="social-platform" placeholder="Platform (e.g. LinkedIn)" style="flex:1 1 200px; min-width:180px;" />
+                <input type="text" class="social-platform" placeholder="Platform (e.g. LinkedIn)" style="flex:1 1 200px; min-width:180px;" maxlength="50" />
                 <div style="flex:2 1 320px; min-width:240px; display:flex; flex-direction:column; gap:4px;">
-                    <input type="text" class="social-url" placeholder="URL (e.g. https://linkedin.com/in/you)" />
+                    <input type="text" class="social-url" placeholder="URL (e.g. https://linkedin.com/in/you)" maxlength="2048" />
                     <small class="edu-year-hint" aria-live="polite">Use full link including https://</small>
                 </div>
                 <div class="edu-controls" aria-label="Row controls" style="display:flex; gap:6px; margin-left:auto;">
@@ -539,6 +539,14 @@ document.addEventListener('click', function(e){
     const tpl = document.getElementById('edu-row-template');
     if (!container || !rowsWrap || !hidden || !addBtn || !tpl) return;
 
+    const MAX_EDU = 10;
+    function updateLimit(){
+        const count = rowsWrap.querySelectorAll('.edu-row').length;
+        addBtn.disabled = count >= MAX_EDU;
+        addBtn.setAttribute('aria-disabled', addBtn.disabled ? 'true' : 'false');
+        addBtn.title = addBtn.disabled ? `Max ${MAX_EDU} items reached` : '+ Add Education';
+    }
+
     function createRow(data){
         const node = tpl.content.firstElementChild.cloneNode(true);
         const level = node.querySelector('.edu-level');
@@ -555,6 +563,7 @@ document.addEventListener('click', function(e){
         }
         node.querySelector('.edu-remove').addEventListener('click', function(){
             node.remove();
+            updateLimit();
         });
         // Move up/down
         node.querySelector('.edu-up').addEventListener('click', function(){
@@ -630,8 +639,11 @@ document.addEventListener('click', function(e){
         rowsWrap.appendChild(createRow({}));
     }
 
+    updateLimit();
     addBtn.addEventListener('click', function(){
+        if (addBtn.disabled) return;
         rowsWrap.appendChild(createRow({}));
+        updateLimit();
     });
 
     // Before submit: validate and rebuild hidden inputs as education_items[index][field]
@@ -689,6 +701,14 @@ document.addEventListener('click', function(e){
     const tpl = document.getElementById('exp-row-template');
     if (!container || !rowsWrap || !hidden || !addBtn || !tpl) return;
 
+    const MAX_EXP = 10;
+    function updateLimit(){
+        const count = rowsWrap.querySelectorAll('.edu-row').length;
+        addBtn.disabled = count >= MAX_EXP;
+        addBtn.setAttribute('aria-disabled', addBtn.disabled ? 'true' : 'false');
+        addBtn.title = addBtn.disabled ? `Max ${MAX_EXP} items reached` : '+ Add Experience';
+    }
+
     function createRow(data){
         const node = tpl.content.firstElementChild.cloneNode(true);
         const title = node.querySelector('.exp-title');
@@ -704,7 +724,7 @@ document.addEventListener('click', function(e){
             addr.value = data.address || '';
             desc.value = data.description || '';
         }
-        node.querySelector('.exp-remove').addEventListener('click', function(){ node.remove(); });
+    node.querySelector('.exp-remove').addEventListener('click', function(){ node.remove(); updateLimit(); });
         node.querySelector('.exp-up').addEventListener('click', function(){ const prev = node.previousElementSibling; if (prev) rowsWrap.insertBefore(node, prev); });
         node.querySelector('.exp-down').addEventListener('click', function(){ const next = node.nextElementSibling; if (next) rowsWrap.insertBefore(next, node); });
         // Period validation (same rules as year)
@@ -760,7 +780,8 @@ document.addEventListener('click', function(e){
     if (Array.isArray(seedData) && seedData.length) seedData.forEach(item => rowsWrap.appendChild(createRow(item)));
     else rowsWrap.appendChild(createRow({}));
 
-    addBtn.addEventListener('click', function(){ rowsWrap.appendChild(createRow({})); });
+    updateLimit();
+    addBtn.addEventListener('click', function(){ if (addBtn.disabled) return; rowsWrap.appendChild(createRow({})); updateLimit(); });
 
     // Submit: validate and serialize
     const form = document.getElementById('edit-resume-form');
@@ -816,11 +837,19 @@ document.addEventListener('click', function(e){
     const tpl = document.getElementById('skill-row-template');
     if (!container || !rowsWrap || !hidden || !addBtn || !tpl) return;
 
+    const MAX_SKILLS = 30;
+    function updateLimit(){
+        const count = rowsWrap.querySelectorAll('.edu-row').length;
+        addBtn.disabled = count >= MAX_SKILLS;
+        addBtn.setAttribute('aria-disabled', addBtn.disabled ? 'true' : 'false');
+        addBtn.title = addBtn.disabled ? `Max ${MAX_SKILLS} items reached` : 'Add Skill';
+    }
+
     function createRow(val){
         const node = tpl.content.firstElementChild.cloneNode(true);
         const input = node.querySelector('.skill-name');
         if (typeof val === 'string') input.value = val;
-        node.querySelector('.skill-remove').addEventListener('click', function(){ node.remove(); });
+        node.querySelector('.skill-remove').addEventListener('click', function(){ node.remove(); updateLimit(); });
         node.querySelector('.skill-up').addEventListener('click', function(){ const prev = node.previousElementSibling; if (prev) rowsWrap.insertBefore(node, prev); });
         node.querySelector('.skill-down').addEventListener('click', function(){ const next = node.nextElementSibling; if (next) rowsWrap.insertBefore(next, node); });
         return node;
@@ -830,7 +859,8 @@ document.addEventListener('click', function(e){
     if (Array.isArray(seedData) && seedData.length) seedData.forEach(s => rowsWrap.appendChild(createRow(s)));
     else rowsWrap.appendChild(createRow(''));
 
-    addBtn.addEventListener('click', function(){ rowsWrap.appendChild(createRow('')); });
+    updateLimit();
+    addBtn.addEventListener('click', function(){ if (addBtn.disabled) return; rowsWrap.appendChild(createRow('')); updateLimit(); });
 
     const form = document.getElementById('edit-resume-form');
     form.addEventListener('submit', function(){
@@ -858,12 +888,20 @@ document.addEventListener('click', function(e){
     const tpl = document.getElementById('social-row-template');
     if (!container || !rowsWrap || !hidden || !addBtn || !tpl) return;
 
+    const MAX_SOCIALS = 10;
+    function updateLimit(){
+        const count = rowsWrap.querySelectorAll('.edu-row').length;
+        addBtn.disabled = count >= MAX_SOCIALS;
+        addBtn.setAttribute('aria-disabled', addBtn.disabled ? 'true' : 'false');
+        addBtn.title = addBtn.disabled ? `Max ${MAX_SOCIALS} items reached` : '+ Add Social';
+    }
+
     function createRow(data){
         const node = tpl.content.firstElementChild.cloneNode(true);
         const platform = node.querySelector('.social-platform');
         const url = node.querySelector('.social-url');
         if (data) { platform.value = data.platform || ''; url.value = data.url || ''; }
-        node.querySelector('.social-remove').addEventListener('click', function(){ node.remove(); });
+        node.querySelector('.social-remove').addEventListener('click', function(){ node.remove(); updateLimit(); });
         node.querySelector('.social-up').addEventListener('click', function(){ const prev = node.previousElementSibling; if (prev) rowsWrap.insertBefore(node, prev); });
         node.querySelector('.social-down').addEventListener('click', function(){ const next = node.nextElementSibling; if (next) rowsWrap.insertBefore(next, node); });
         // Basic URL validation
@@ -877,7 +915,8 @@ document.addEventListener('click', function(e){
     if (Array.isArray(seedData) && seedData.length) seedData.forEach(item => rowsWrap.appendChild(createRow(item)));
     else rowsWrap.appendChild(createRow({}));
 
-    addBtn.addEventListener('click', function(){ rowsWrap.appendChild(createRow({})); });
+    updateLimit();
+    addBtn.addEventListener('click', function(){ if (addBtn.disabled) return; rowsWrap.appendChild(createRow({})); updateLimit(); });
 
     const form = document.getElementById('edit-resume-form');
     form.addEventListener('submit', function(e){

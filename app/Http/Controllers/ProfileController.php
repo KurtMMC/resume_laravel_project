@@ -45,12 +45,12 @@ class ProfileController extends Controller
         if (!$user) { return redirect('/login'); }
 
         $data = $request->validate([
-            'name' => ['nullable','string','max:255'],
-            'title' => ['nullable','string','max:255'],
-            'address' => ['nullable','string','max:255'],
-            'phone' => ['nullable','string','max:50'],
-            'email' => ['nullable','email','max:255'],
-            'slug' => ['nullable','string','max:255'],
+            'name' => ['nullable','string','max:80'],
+            'title' => ['nullable','string','max:100'],
+            'address' => ['nullable','string','max:120'],
+            'phone' => ['nullable','string','max:24'],
+            'email' => ['nullable','email','max:254'],
+            'slug' => ['nullable','string','max:60','regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
             'profile_picture' => ['nullable','image','max:5120'], // up to ~5MB
             // Textareas submit strings; we'll normalize below
             'experiences' => ['nullable','string'],
@@ -58,25 +58,25 @@ class ProfileController extends Controller
             'skills' => ['nullable','string'],
             'socials' => ['nullable','string'],
             // New structured education fields (repeater)
-            'education_items' => ['sometimes','array'],
-            'education_items.*.level' => ['nullable','string','max:255'],
-            'education_items.*.description' => ['nullable','string'],
-            'education_items.*.address' => ['nullable','string','max:255'],
-            'education_items.*.year' => ['nullable','string','max:255'],
+            'education_items' => ['sometimes','array','max:10'],
+            'education_items.*.level' => ['nullable','string','max:120'],
+            'education_items.*.description' => ['nullable','string','max:300'],
+            'education_items.*.address' => ['nullable','string','max:120'],
+            'education_items.*.year' => ['nullable','string','max:25','regex:/^\d{4}(?:[–-](?:\d{4}|Present))?$/i'],
             // New structured experience fields (repeater)
-            'experience_items' => ['sometimes','array'],
-            'experience_items.*.title' => ['nullable','string','max:255'],
-            'experience_items.*.company' => ['nullable','string','max:255'],
-            'experience_items.*.description' => ['nullable','string'],
-            'experience_items.*.address' => ['nullable','string','max:255'],
-            'experience_items.*.period' => ['nullable','string','max:255'],
+            'experience_items' => ['sometimes','array','max:10'],
+            'experience_items.*.title' => ['nullable','string','max:100'],
+            'experience_items.*.company' => ['nullable','string','max:100'],
+            'experience_items.*.description' => ['nullable','string','max:300'],
+            'experience_items.*.address' => ['nullable','string','max:120'],
+            'experience_items.*.period' => ['nullable','string','max:25','regex:/^\d{4}(?:[–-](?:\d{4}|Present))?$/i'],
             // New structured skills
-            'skill_items' => ['sometimes','array'],
-            'skill_items.*.name' => ['nullable','string','max:255'],
+            'skill_items' => ['sometimes','array','max:30'],
+            'skill_items.*.name' => ['nullable','string','max:50'],
             // New structured socials
-            'social_items' => ['sometimes','array'],
-            'social_items.*.platform' => ['nullable','string','max:255'],
-            'social_items.*.url' => ['nullable','string','max:2048'],
+            'social_items' => ['sometimes','array','max:10'],
+            'social_items.*.platform' => ['nullable','string','max:50'],
+            'social_items.*.url' => ['nullable','string','max:2048','regex:/^https?:\/\//i'],
         ]);
 
         $profile = Profile::firstOrCreate(['user_id' => $user->id]);
