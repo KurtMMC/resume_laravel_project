@@ -1,187 +1,127 @@
-## Project Overview
+# Resume Laravel Project
 
-This repository hosts a simple resume/portfolio site built on Laravel with a modern contact flow:
+A polished resume/portfolio app built with Laravel, featuring a modern resume page, profile editor, light/dark theme, and an AJAX contact flow.
 
-- Contact form with AJAX submit (no page reload)
-- Validation with inline field error display
-- Optional file attachments (validated, saved, and emailed)
-- Message persistence in the database for record-keeping
-- Email delivery via `.env` (log for testing, SMTP for production)
+---
 
-## How it works (Contact Flow)
+## Features
 
-High-level sequence from the browser to your inbox and DB:
+- Public resume page with skill chips, socials capsules, and section animations
+- Edit dashboard with repeaters (Experience, Education, Skills) and keyboard + drag reordering
+- Education/Experience “Current” support and year validation (e.g., 2020–Present)
+- Theme-aware UI (light/dark), floating Back-to-top, and side navigation with scrollspy
+- “Profile Updated” toast after saving (stored via sessionStorage)
+- Contact form with AJAX submit, server-side validation, optional attachments, and email delivery
+- Email templates and DB persistence of contact messages
+- Built with Vite (fast dev + hashed production builds)
 
-```
-[User on resume page]
-	|
-	| 1) Fills contact form (name, email, phone?, message, attachments)
-	| 2) Clicks Send → JS intercepts → fetch() JSON POST
-	v
-[POST /contact/send] → routes/web.php → ContactController@send
-	|
-	| Validate inputs (server-side)
-	| Save ContactMessage (DB)
-	| Store attachments to public disk (storage/app/public/attachments)
-	| Send ContactMail (view: resources/views/emails/contact.blade.php) with attachments
-	v
-[Response]
-	- JSON (AJAX): success or field errors (displayed inline)
-	- Non-AJAX: redirect back with flash message
-```
+## Tech stack
 
-## Key files
+- PHP 8+, Laravel
+- MySQL (e.g., via XAMPP)
+- Vite for assets (vanilla JS + handcrafted CSS)
 
-- `routes/web.php` → Route for `POST /contact/send`
-- `app/Http/Controllers/ContactController.php` → Validates, persists, uploads files, sends email, returns JSON/redirect
-- `app/Models/ContactMessage.php` → Eloquent model; attachments stored as JSON
-- `app/Mail/ContactMail.php` → Mailable for composing the contact email
-- `resources/views/resume.blade.php` → Contact section + JS for AJAX submission
-- `resources/views/emails/contact.blade.php` → Email template (shows details and attachment links)
-- `public/css/style.css` → Styles for layout, dark mode, spinners, validation, and login password toggle
+## Getting started (Windows / PowerShell)
 
-## Configuration notes
+Prereqs: PHP, Composer, MySQL, Node.js (for Vite), and optionally XAMPP (Apache + MySQL).
 
-- Email modes via `.env`:
-  - `MAIL_MAILER=log` → writes emails to `storage/logs/laravel.log` (good for testing)
-  - `MAIL_MAILER=smtp` → sends real emails (configure host, port, username, password)
-- Attachments are stored on the `public` disk under `attachments/` and are served via `/storage/...` after creating the storage symlink.
-- Database includes a `contact_messages` table (plus an attachments JSON column) created via migrations.
+1. Install dependencies and create env
 
-## Local setup (Windows / PowerShell)
+    ```powershell
+    composer install
+    Copy-Item .env.example .env
+    php artisan key:generate
+    ```
 
-Prereqs: PHP, Composer, MySQL (e.g., XAMPP), and optionally Node.js if you plan to use Vite.
+1. Configure database and migrate
 
-1) Create `.env` and app key
+    Edit `.env` with DB settings (DB_DATABASE, DB_USERNAME, DB_PASSWORD), then:
 
-```powershell
-Copy-Item .env.example .env
-php artisan key:generate
-```
+    ```powershell
+    php artisan migrate
+    php artisan storage:link  # expose public storage for uploads
+    ```
 
-2) Configure your database in `.env` (DB_DATABASE, DB_USERNAME, DB_PASSWORD), then migrate
+1. Install and build assets
 
-```powershell
-# Standard: run all migrations
-php artisan migrate
+    ```powershell
+    npm install
+    npm run dev   # or: npm run build
+    ```
 
-# If you get "table already exists" errors, run only the contact-related migrations:
-php artisan migrate --path=database/migrations/2025_09_23_033843_create_contact_messages_table.php
-php artisan migrate --path=database/migrations/2025_09_23_040900_add_attachments_to_contact_messages_table.php
-```
+    Note (PowerShell execution policy): if `npm run` fails with a policy error, use:
 
-3) Expose public storage (for attachments)
+    ```powershell
+    cmd /c npm run build
+    ```
 
-```powershell
-php artisan storage:link
-```
+1. Run the app
 
-4) Start the dev server
+    Option A (built-in server):
 
-```powershell
-php artisan serve
-```
+    ```powershell
+    php artisan serve
+    ```
 
-5) Optional: install and build frontend assets
+    Option B (XAMPP Apache): point DocumentRoot to `public/` and visit <http://localhost/>.
 
-```powershell
-npm install
-npm run dev
-```
+    Default dev URL: <http://127.0.0.1:8000>
 
-## Frontend assets with Vite
+## Frontend (Vite)
 
-This project now uses Vite with the Laravel plugin. CSS/JS live under `resources/` and are referenced in Blade with `@vite`:
+Assets are referenced in Blade with `@vite`:
 
-```
+```blade
 @vite(['resources/css/site.css'])
 @vite(['resources/js/theme-auto.js','resources/js/auto-dismiss.js'])
 ```
 
-- Development (HMR):
+- Development (HMR): `npm run dev`
+- Production build (hashes to `public/build`): `npm run build`
+
+## Configuration
+
+- Mail (.env):
+  - Testing/log mode: `MAIL_MAILER=log` (view messages in `storage/logs/laravel.log`)
+  - SMTP mode: `MAIL_MAILER=smtp` + `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_ENCRYPTION`
+- Site config: `config/site.php` (some UI/behavior toggles live here)
+- Middleware highlights:
+  - `EnsureLoggedIn` to protect private routes
+  - `NoCache` to prevent sensitive pages from caching
+
+## Key files
+
+- Routes: `routes/web.php`
+- Controllers: `app/Http/Controllers/*` (Auth, Profile, Resume, Contact)
+- Middleware: `app/Http/Middleware/*` (EnsureLoggedIn, NoCache, etc.)
+- Models: `app/Models/*` (User, Profile, ContactMessage)
+- Mails: `app/Mail/ContactMail.php`
+- Views: `resources/views/*` (resume, dashboard, auth, errors, emails)
+- Assets: `resources/css/*.css`, `resources/js/*.js`
+- Vite config: `vite.config.js`
+
+## Common tasks
 
 ```powershell
-npm run dev
+# Clear cached views/config if assets or views look stale
+php artisan view:clear
+php artisan config:clear
+
+# Rebuild assets for production
+cmd /c npm run build
 ```
 
-- Production build (outputs to `public/build` with hashed filenames):
+## Troubleshooting
 
-```powershell
-npm run build
-```
-
-Deprecated public files (left as stubs for clarity):
-
-- `public/css/style.css`, `public/css/auth.css`
-- `public/js/theme-auto.js`, `public/js/auto-dismiss.js`, `public/js/close-tab.js`
-
-Use the `@vite` examples above instead of linking these directly.
-
-## Try it
-
-1) Open the site (default): http://127.0.0.1:8000
-
-2) Go to the contact section (on the resume page), fill in the form, and submit.
-
-3) Email delivery modes:
-
-- Log mode (recommended for testing):
-
-	In `.env` set `MAIL_MAILER=log`, then refresh config:
-
-	```powershell
-	php artisan config:clear
-	php artisan config:cache
-	```
-
-	Check email contents in `storage/logs/laravel.log`.
-
-- SMTP mode (for real emails):
-
-	Set `MAIL_MAILER=smtp` and configure `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_ENCRYPTION`, then refresh config as above.
-
-Attachments will upload to `storage/app/public/attachments` and be accessible under `/storage/attachments/...`.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- PowerShell policy blocks npm: run via `cmd /c npm run <script>` or temporarily bypass the policy for the session.
+- Assets not updating: `npm run build` (or `npm run dev`) and hard refresh (Ctrl+F5). Also `php artisan view:clear`.
+- Blank page after fresh install: check `.env` DB settings and ensure `php artisan key:generate` was run.
+- File uploads not accessible: ensure `php artisan storage:link` created the `public/storage` symlink.
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Pull requests are welcome for improvements to docs, UX, or tests. For bigger changes, open an issue first to discuss.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project’s license is not explicitly set. Add a LICENSE file (MIT recommended) if you plan to distribute.
