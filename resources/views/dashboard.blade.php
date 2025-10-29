@@ -7,6 +7,7 @@
     @vite(['resources/js/theme-auto.js'])
 </head>
 <body>
+<div id="live-clock" class="live-clock" aria-live="polite" title="Current date & time"></div>
 <!-- Side nav mirrors resume nav -->
 <div class="side-nav" aria-label="Page navigation">
     <a id="nav-back-link" href="{{ route('resume') }}">
@@ -497,6 +498,22 @@ function toggleDarkMode() {
     const sun = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
     const moon = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path></svg>';
     btn.innerHTML = (isDark ? sun + ' Light Mode' : moon + ' Dark Mode');
+})();
+
+// Live clock (top-right) like Resume page
+(function(){
+    const el = document.getElementById('live-clock');
+    if (!el) return;
+    function fmt() {
+        const now = new Date();
+        return now.toLocaleString(undefined, {
+            weekday: 'short', year: 'numeric', month: 'short', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+    }
+    function tick(){ el.textContent = fmt(); }
+    tick();
+    setInterval(tick, 1000);
 })();
 
 // Smooth scrolling helpers with easing for a softer feel
