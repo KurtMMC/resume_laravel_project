@@ -27,6 +27,19 @@
 <!-- Live Clock (top-right) -->
 <div id="live-clock" class="live-clock" aria-live="polite" title="Current date & time"></div>
 
+@php
+    // Determine Resume PDF from attachments (if any)
+    $resumePdfUrl = null;
+    if (isset($attachments) && is_array($attachments)) {
+        foreach ($attachments as $att) {
+            $u = is_array($att) ? ($att['url'] ?? null) : (is_string($att) ? $att : null);
+            if (!$u) continue;
+            $p = parse_url($u, PHP_URL_PATH) ?: '';
+            if (strtolower(pathinfo($p, PATHINFO_EXTENSION)) === 'pdf') { $resumePdfUrl = $u; break; }
+        }
+    }
+@endphp
+
 <header id="about" style="position:relative; padding-top:90px;">
     <div class="avatar-overlap" style="position:relative; margin-top:-50px; z-index:2;">
         <div class="avatar-frame" aria-label="Profile image" style="width:150px; height:150px; border-radius:50%; background:#e2e8f0; color:#64748b; display:flex; align-items:center; justify-content:center; overflow:hidden; margin:0 auto 10px auto;">
@@ -50,13 +63,15 @@
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"></path><path d="M22 6l-10 7L2 6"/></svg>
         <a href="mailto:{{ $email }}">{{ $email }}</a>
     </p>
+    @if($resumePdfUrl)
     <div class="hero-cta">
         <button type="button" id="download-pdf-btn" class="btn btn-primary btn-download">
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
             Download PDF
         </button>
-        <a href="{{ asset('resume.pdf') }}" download id="download-pdf-link" aria-hidden="true" tabindex="-1" style="display:none"></a>
+        <a href="{{ $resumePdfUrl }}" download id="download-pdf-link" aria-hidden="true" tabindex="-1" style="display:none"></a>
     </div>
+    @endif
 </header>
 
 <div class="side-nav" aria-label="Page navigation">
