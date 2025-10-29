@@ -202,17 +202,19 @@
         // Prefer controller-provided $attachments if present and valid
         if (isset($attachments) && is_array($attachments)) {
             foreach ($attachments as $att) {
+                $url = null; $label = 'Attachment';
                 if (is_string($att)) {
-                    // If the array is just URLs, derive a label
-                    $attachmentsList[] = [
-                        'label' => basename(parse_url($att, PHP_URL_PATH) ?: 'Attachment'),
-                        'url' => $att,
-                    ];
+                    $url = $att;
+                    $label = basename(parse_url($att, PHP_URL_PATH) ?: 'Attachment');
                 } elseif (is_array($att)) {
                     $label = $att['label'] ?? ($att['name'] ?? 'Attachment');
                     $url = $att['url'] ?? ($att['link'] ?? null);
-                    if ($url) { $attachmentsList[] = ['label' => $label, 'url' => $url]; }
                 }
+                if (!$url) continue;
+                // Hide the header-uploaded Resume PDF (stored under /storage/resumes/) from the Attachments section
+                $pathOnly = parse_url($url, PHP_URL_PATH) ?: '';
+                if (strpos($pathOnly, '/storage/resumes/') !== false) { continue; }
+                $attachmentsList[] = ['label' => $label, 'url' => $url];
             }
         }
         // No fallback; only show attachments provided from the profile/editor
