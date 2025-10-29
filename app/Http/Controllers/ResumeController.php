@@ -36,6 +36,7 @@ class ResumeController extends Controller
             'education' => [],
             'skills' => is_array($profile?->skills) ? $profile->skills : [],
             'socials' => is_array($profile?->socials) ? $profile->socials : [],
+            'attachments' => is_array($profile?->attachments) ? $profile->attachments : [],
         ];
         // Normalize education to expected structure
         if (is_array($profile?->education)) {
@@ -74,6 +75,7 @@ class ResumeController extends Controller
             'education' => [],
             'skills' => is_array($userProfile->skills) ? $userProfile->skills : [],
             'socials' => is_array($userProfile->socials) ? $userProfile->socials : [],
+            'attachments' => is_array($userProfile->attachments) ? $userProfile->attachments : [],
             'public_view' => true,
         ];
 
@@ -110,6 +112,7 @@ class ResumeController extends Controller
             'education' => [],
             'skills' => is_array($userProfile->skills) ? $userProfile->skills : [],
             'socials' => is_array($userProfile->socials) ? $userProfile->socials : [],
+            'attachments' => is_array($userProfile->attachments) ? $userProfile->attachments : [],
             'public_view' => true,
         ];
 
