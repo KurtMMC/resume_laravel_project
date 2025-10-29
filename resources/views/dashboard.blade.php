@@ -33,7 +33,7 @@
 <!-- Main edit form laid out like resume -->
 <form id="edit-resume-form" method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" data-resume-url="{{ route('resume') }}">
 @csrf
-<input type="hidden" name="redirect_to" id="redirect_to_input" value="" />
+<input type="hidden" name="redirect_to" id="redirect_to_input" value="{{ route('resume') }}" />
 
 <header id="about" style="display:flex; gap:20px; align-items:center; justify-content:space-between; position:relative;">
     <div class="avatar-overlap" style="position:relative; text-align:center; z-index:3;">

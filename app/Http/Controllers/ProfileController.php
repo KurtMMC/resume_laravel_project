@@ -263,11 +263,11 @@ class ProfileController extends Controller
 
         $profile->fill(array_merge($data, [ 'is_public' => true ]))->save();
 
-        // Optional redirect target after saving (e.g., Back action wants to leave page)
+        // Redirect after saving: prefer explicit target, else go to Resume page
         $to = trim((string) $request->input('redirect_to', ''));
         if ($to !== '') {
             return redirect()->to($to)->with('success', 'Profile updated');
         }
-        return back()->with('success', 'Profile updated');
+        return redirect()->route('resume')->with('success', 'Profile updated');
     }
 }
