@@ -17,6 +17,7 @@
     <a href="#about">About</a>
     <a href="#experience-education">Experience &amp; Education</a>
     <a href="#skills">Skills</a>
+    <a href="#attachments">Attachments</a>
     <a href="#socials">Socials</a>
     <hr style="margin:10px 0; border:0; border-top:1px solid #e2e8f0;">
     <button type="button" class="nav-btn dark-toggle" onclick="toggleDarkMode()">
@@ -284,6 +285,61 @@
         </div>
     <div id="skill-hidden-inputs" style="display:none;"></div>
     <input type="hidden" name="skill_items_present" value="1" />
+    </div>
+    
+</section>
+
+<section id="attachments">
+    <h2>Attachments</h2>
+    <p class="section-note">Add links to files like your resume PDF, portfolio, or certificates. You can reorder them.</p>
+    <div class="panel">
+    <div id="attachments-repeater" class="repeater" style="display:flex; flex-direction:column; gap:12px;">
+        @php
+            $attachmentItems = [];
+            if (old('attachment_items')) {
+                $attachmentItems = array_values(array_map(fn($it)=> [ 'label' => $it['label'] ?? '', 'url' => $it['url'] ?? '' ], old('attachment_items')));
+            } elseif (is_array($profile->attachments)) {
+                foreach ($profile->attachments as $att) {
+                    if (is_array($att)) {
+                        $attachmentItems[] = ['label' => $att['label'] ?? '', 'url' => $att['url'] ?? ''];
+                    } elseif (is_string($att)) {
+                        $attachmentItems[] = ['label' => '', 'url' => $att];
+                    }
+                }
+            }
+            if (empty($attachmentItems)) { $attachmentItems = [['label'=>'','url'=>'']]; }
+        @endphp
+        <template id="attachment-row-template">
+            <div class="edu-row card" draggable="true" aria-grabbed="false" role="listitem" style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;">
+                <button type="button" class="btn-icon drag-handle" title="Drag to reorder" aria-label="Drag to reorder" tabindex="0">
+                    <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M7 5h0M12 5h0M17 5h0M7 12h0M12 12h0M17 12h0M7 19h0M12 19h0M17 19h0"/></svg>
+                </button>
+                <input type="text" class="attachment-label" placeholder="Label (e.g. Resume PDF)" style="flex:1 1 220px; min-width:180px;" maxlength="120" />
+                <div style="flex:2 1 320px; min-width:240px; display:flex; flex-direction:column; gap:4px;">
+                    <input type="text" class="attachment-url" placeholder="URL (e.g. https://example.com/resume.pdf)" maxlength="2048" />
+                    <small class="edu-year-hint" aria-live="polite">Use full link including https://</small>
+                </div>
+                <div class="edu-controls" aria-label="Row controls" style="display:flex; gap:6px; margin-left:auto;">
+                    <button type="button" class="btn-icon attachment-up" title="Move up" aria-label="Move up" tabindex="0">
+                        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M7 11l5-5 5 5"/></svg>
+                    </button>
+                    <button type="button" class="btn-icon attachment-down" title="Move down" aria-label="Move down" tabindex="0">
+                        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M7 13l5 5 5-5"/></svg>
+                    </button>
+                    <button type="button" class="btn-icon danger attachment-remove" title="Remove" aria-label="Remove row" tabindex="0">
+                        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6v12"/><path d="M16 6v12"/><path d="M5 6l1-3h12l1 3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </template>
+        <div id="attachment-rows" class="rows"></div>
+        <script type="application/json" id="attachment-seed-data">@json($attachmentItems)</script>
+        <div>
+            <button type="button" class="btn btn-secondary add-btn" id="attachment-add">+ Add Attachment</button>
+        </div>
+    </div>
+    <div id="attachment-hidden-inputs" style="display:none;"></div>
+    <input type="hidden" name="attachment_items_present" value="1" />
     </div>
     
 </section>
@@ -956,6 +1012,82 @@ document.addEventListener('click', function(e){
     enableDragAndDrop(rowsWrap);
 })();
 
+// Attachments repeater: add/remove/reorder, URL validation, and hidden input syncing
+(function(){
+    const container = document.getElementById('attachments-repeater');
+    const rowsWrap = document.getElementById('attachment-rows');
+    const hidden = document.getElementById('attachment-hidden-inputs');
+    const addBtn = document.getElementById('attachment-add');
+    const tpl = document.getElementById('attachment-row-template');
+    if (!container || !rowsWrap || !hidden || !addBtn || !tpl) return;
+
+    const MAX_ATTACHMENTS = 10;
+    function updateLimit(){
+        const count = rowsWrap.querySelectorAll('.edu-row').length;
+        addBtn.disabled = count >= MAX_ATTACHMENTS;
+        addBtn.setAttribute('aria-disabled', addBtn.disabled ? 'true' : 'false');
+        addBtn.title = addBtn.disabled ? `Max ${MAX_ATTACHMENTS} items reached` : '+ Add Attachment';
+    }
+
+    function createRow(data){
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        const label = node.querySelector('.attachment-label');
+        const url = node.querySelector('.attachment-url');
+        if (data) { label.value = data.label || ''; url.value = data.url || ''; }
+        node.querySelector('.attachment-remove').addEventListener('click', function(){ node.remove(); updateLimit(); });
+        node.querySelector('.attachment-up').addEventListener('click', function(){ const prev = node.previousElementSibling; if (prev) rowsWrap.insertBefore(node, prev); });
+        node.querySelector('.attachment-down').addEventListener('click', function(){ const next = node.nextElementSibling; if (next) rowsWrap.insertBefore(next, node); });
+        function valid(u){ const s = (u||'').trim(); if (!s) return true; return /^https?:\/\//i.test(s); }
+        function update(){ const ok = valid(url.value); url.classList.toggle('invalid', !ok); }
+        url.addEventListener('input', update); update();
+        return node;
+    }
+
+    const seedData = (function(){ try { return JSON.parse(document.getElementById('attachment-seed-data')?.textContent || 'null'); } catch(e){ return null; } })();
+    if (Array.isArray(seedData) && seedData.length) seedData.forEach(item => rowsWrap.appendChild(createRow(item)));
+    else rowsWrap.appendChild(createRow({}));
+
+    updateLimit();
+    addBtn.addEventListener('click', function(){ if (addBtn.disabled) return; rowsWrap.appendChild(createRow({})); updateLimit(); });
+
+    const form = document.getElementById('edit-resume-form');
+    form.addEventListener('submit', function(e){
+        hidden.innerHTML = '';
+        const rows = Array.from(rowsWrap.querySelectorAll('.edu-row'));
+        let hasInvalid = false;
+        rows.forEach((row, i) => {
+            const label = row.querySelector('.attachment-label').value.trim();
+            const url = row.querySelector('.attachment-url').value.trim();
+            const urlEl = row.querySelector('.attachment-url');
+            const ok = !url || /^https?:\/\//i.test(url);
+            if (!ok) { urlEl.classList.add('invalid'); hasInvalid = true; }
+            if (!label && !url) return;
+            const fields = { label, url };
+            Object.entries(fields).forEach(([k,v]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `attachment_items[${i}][${k}]`;
+                input.value = v;
+                hidden.appendChild(input);
+            });
+        });
+        if (hasInvalid) {
+            e.preventDefault();
+            const container = document.getElementById('toast-region');
+            if (container) {
+                const box = document.createElement('div');
+                box.className = 'alert alert-danger';
+                box.style.minWidth = '260px';
+                box.style.maxWidth = '420px';
+                box.textContent = 'Please enter full Attachment URLs starting with http:// or https://';
+                container.appendChild(box);
+                setTimeout(() => { box.classList.add('fade-out'); setTimeout(() => box.remove(), 650); }, 3000);
+            }
+        }
+    });
+    enableDragAndDrop(rowsWrap);
+})();
+
 // Generic drag-and-drop for .edu-row within a container
 function enableDragAndDrop(container){
     if (!container) return;
@@ -1047,6 +1179,14 @@ function enableDragAndDrop(container){
                 url: row.querySelector('.social-url')?.value || ''
             }));
             obj['__socials__'] = JSON.stringify(rows);
+        } catch(e) {}
+        // Include attachments repeater
+        try {
+            const rows = Array.from(document.querySelectorAll('#attachment-rows .edu-row')).map(row => ({
+                label: row.querySelector('.attachment-label')?.value || '',
+                url: row.querySelector('.attachment-url')?.value || ''
+            }));
+            obj['__attachments__'] = JSON.stringify(rows);
         } catch(e) {}
         return JSON.stringify(obj);
     }

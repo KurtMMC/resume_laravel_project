@@ -988,6 +988,43 @@ footer .socials a:focus { color: #fff; }
 	color: #e5e7eb;
 }
 
+/* Attachments section: pill links with strong contrast */
+#attachments .attachments a {
+	background: rgba(41,128,185,0.22);
+	border: 1px solid rgba(41,128,185,0.45);
+	color: #fff;
+}
+#attachments .attachments a:hover { background: rgba(41,128,185,0.32); }
+/* Keep text white across link states in light mode */
+#attachments .attachments a,
+#attachments .attachments a:visited,
+#attachments .attachments a:hover,
+#attachments .attachments a:active,
+#attachments .attachments a:focus { color: #fff; }
+.dark-mode #attachments .attachments a {
+	background: rgba(255,255,255,0.08);
+	border-color: rgba(255,255,255,0.18);
+	color: #e5e7eb;
+}
+.dark-mode #attachments .attachments a:hover { background: rgba(255,255,255,0.14); }
+
+/* Small file-type pill inside attachment links */
+#attachments .attachments .file-pill {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	line-height: 1.2;
+	background: rgba(255,255,255,0.18);
+	border: 1px solid rgba(255,255,255,0.28);
+	color: #fff;
+}
+.dark-mode #attachments .attachments .file-pill {
+	background: rgba(255,255,255,0.12);
+	border-color: rgba(255,255,255,0.22);
+	color: #e5e7eb;
+}
+
 /* Print view */
 @media print {
 	nav, .dark-toggle, .contact-form, .print-btn, .hero-cta { display: none !important; }

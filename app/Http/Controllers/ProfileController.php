@@ -77,6 +77,10 @@ class ProfileController extends Controller
             'social_items' => ['sometimes','array','max:10'],
             'social_items.*.platform' => ['nullable','string','max:50'],
             'social_items.*.url' => ['nullable','string','max:2048','regex:/^https?:\/\//i'],
+            // New structured attachments
+            'attachment_items' => ['sometimes','array','max:10'],
+            'attachment_items.*.label' => ['nullable','string','max:120'],
+            'attachment_items.*.url' => ['nullable','string','max:2048','regex:/^https?:\/\//i'],
         ]);
 
         $profile = Profile::firstOrCreate(['user_id' => $user->id]);
@@ -187,6 +191,20 @@ class ProfileController extends Controller
                 if ($k && $v) { $socials[$k] = $v; }
             }
             $data['socials'] = $socials;
+        }
+
+        // attachments: array of {label, url}
+        if ($request->has('attachment_items')) {
+            $items = (array) $request->input('attachment_items');
+            $attachments = [];
+            foreach ($items as $it) {
+                $label = isset($it['label']) ? trim((string)$it['label']) : '';
+                $url = isset($it['url']) ? trim((string)$it['url']) : '';
+                if ($url !== '') { $attachments[] = ['label' => $label ?: 'Attachment', 'url' => $url]; }
+            }
+            $data['attachments'] = $attachments;
+        } elseif ($request->boolean('attachment_items_present')) {
+            $data['attachments'] = [];
         }
 
         // Handle slug uniqueness if provided/changed

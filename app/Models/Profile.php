@@ -9,7 +9,7 @@ class Profile extends Model
 {
     protected $fillable = [
     'user_id', 'name', 'title', 'address', 'phone', 'email', 'slug', 'profile_picture',
-        'experiences', 'education', 'skills', 'socials', 'is_public',
+        'experiences', 'education', 'skills', 'socials', 'attachments', 'is_public',
     ];
 
     protected $casts = [
@@ -17,6 +17,7 @@ class Profile extends Model
         'education'   => 'array',
         'skills'      => 'array',
         'socials'     => 'array',
+        'attachments' => 'array',
         'is_public'   => 'boolean',
     ];
 

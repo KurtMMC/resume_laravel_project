@@ -67,6 +67,7 @@
     <a href="#about">About</a>
     <a href="#experience-education">Experience &amp; Education</a>
     <a href="#skills">Skills</a>
+    <a href="#attachments">Attachments</a>
     <a href="#user-socials">Socials</a>
     <hr style="margin:10px 0; border:0; border-top:1px solid #e2e8f0;">
     @if(empty($public_view) && (session('logged_in') || auth()->check()))
@@ -89,7 +90,6 @@
         </form>
     @endif
 </div>
-
 <div class="two-col" id="experience-education">
 <section id="experience">
     <h2>Experience</h2>
@@ -179,6 +179,57 @@
 </section>
 
 
+
+<section id="attachments">
+    <h2>Attachments</h2>
+    @php
+        $attachmentsList = [];
+        // Prefer controller-provided $attachments if present and valid
+        if (isset($attachments) && is_array($attachments)) {
+            foreach ($attachments as $att) {
+                if (is_string($att)) {
+                    // If the array is just URLs, derive a label
+                    $attachmentsList[] = [
+                        'label' => basename(parse_url($att, PHP_URL_PATH) ?: 'Attachment'),
+                        'url' => $att,
+                    ];
+                } elseif (is_array($att)) {
+                    $label = $att['label'] ?? ($att['name'] ?? 'Attachment');
+                    $url = $att['url'] ?? ($att['link'] ?? null);
+                    if ($url) { $attachmentsList[] = ['label' => $label, 'url' => $url]; }
+                }
+            }
+        }
+        // Fallback: include built-in resume PDF if it exists in public/
+        try {
+            if (function_exists('public_path') && file_exists(public_path('resume.pdf'))) {
+                $attachmentsList[] = ['label' => 'Resume (PDF)', 'url' => asset('resume.pdf')];
+            }
+        } catch (Throwable $e) {
+            // ignore filesystem issues in view
+        }
+    @endphp
+    @if(count($attachmentsList))
+        <ul class="attachments" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+            @foreach($attachmentsList as $a)
+                @php
+                    $path = parse_url($a['url'] ?? '', PHP_URL_PATH) ?: '';
+                    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                    $extLabel = $ext ? strtoupper($ext) : 'FILE';
+                @endphp
+                <li>
+                    <a href="{{ $a['url'] }}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:10px; padding:8px 12px; border-radius:999px; text-decoration:none;">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.44 11.05l-8.49 8.49a5 5 0 0 1-7.07-7.07l8.49-8.49a3.5 3.5 0 1 1 4.95 4.95l-8.49 8.49a2 2 0 0 1-2.83-2.83l7.78-7.78" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                        <span class="file-pill" aria-label="File type">{{ $extLabel }}</span>
+                        <span>{{ $a['label'] }}</span>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    @else
+        <p>No attachments added.</p>
+    @endif
+</section>
 
 <section id="user-socials">
     <h2>Socials</h2>
