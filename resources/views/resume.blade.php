@@ -75,8 +75,17 @@
 </header>
 
 <div class="side-nav" aria-label="Page navigation">
-    <div class="side-nav-greeting" id="side-nav-greeting" data-first-name="{{ session('user_name') ?? (explode(' ', trim($name))[0] ?? 'Guest') }}">
-        Hello, <strong>{{ session('user_name') ?? (explode(' ', trim($name))[0] ?? 'Guest') }}</strong>
+    <div
+        class="side-nav-greeting"
+        id="side-nav-greeting"
+        data-first-name="{{ session('user_name') ?? (explode(' ', trim($name))[0] ?? 'Guest') }}"
+        data-is-guest="{{ session('guest') ? '1' : '0' }}"
+    >
+        @if(session('guest'))
+            Welcome, <strong>Guest</strong>
+        @else
+            Hello, <strong>{{ session('user_name') ?? (explode(' ', trim($name))[0] ?? 'Guest') }}</strong>
+        @endif
     </div>
     <div class="side-nav-title">Menu</div>
     <a href="#about">About</a>
@@ -404,18 +413,25 @@ function toggleDarkMode() {
     const el = document.getElementById('side-nav-greeting');
     if (!el) return;
     const first = el.getAttribute('data-first-name') || 'Guest';
+    const isGuest = el.getAttribute('data-is-guest') === '1';
     function greetingByHour(h){
         if (h < 12) return 'Good morning';
         if (h < 18) return 'Good afternoon';
         return 'Good evening';
     }
     function updateGreeting(){
+        if (isGuest) {
+            el.innerHTML = 'Welcome, <strong>Guest</strong>';
+            return;
+        }
         const h = new Date().getHours();
         el.innerHTML = greetingByHour(h) + ', <strong>' + first + '</strong>';
     }
     updateGreeting();
-    // Refresh hourly in case the page stays open across boundaries
-    setInterval(updateGreeting, 60 * 60 * 1000);
+    if (!isGuest) {
+        // Refresh hourly for logged-in users
+        setInterval(updateGreeting, 60 * 60 * 1000);
+    }
 })();
 
 // Contact form button loading (resume page)
