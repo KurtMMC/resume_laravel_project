@@ -24,7 +24,7 @@
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path></svg>
         Dark Mode
     </button>
-    <button type="submit" class="nav-btn" id="save-changes-btn" form="edit-resume-form">
+    <button type="button" class="nav-btn" id="save-changes-btn" form="edit-resume-form">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><path d="M17 21v-8H7v8"></path><path d="M7 3v5h8"></path></svg>
         Save Changes
     </button>
@@ -497,10 +497,25 @@ function smoothScrollIntoView(el, duration = 850, offset = 10){
     const redirectInput = document.getElementById('redirect_to_input');
     if (saveBtn && form && redirectInput) {
         saveBtn.addEventListener('click', function(){
+            // Set redirect target so after saving we land on Resume page
             const resumeUrl = form.getAttribute('data-resume-url') || (document.getElementById('nav-back-link')?.getAttribute('href')) || '/resume';
             redirectInput.value = resumeUrl;
             // Flag for Resume page to show a success toast after redirect
             try { sessionStorage.setItem('profileUpdated', '1'); } catch(e) {}
+            // Programmatic submit for robust cross-browser behavior
+            saveBtn.disabled = true; // prevent double-clicks
+            if (typeof form.requestSubmit === 'function') {
+                form.requestSubmit();
+            } else {
+                const tmpBtn = document.createElement('button');
+                tmpBtn.type = 'submit';
+                tmpBtn.style.display = 'none';
+                form.appendChild(tmpBtn);
+                tmpBtn.click();
+                form.removeChild(tmpBtn);
+            }
+            // Re-enable after a short delay in case client-side validation blocks submit
+            setTimeout(() => { saveBtn.disabled = false; }, 1500);
         });
     }
 })();
