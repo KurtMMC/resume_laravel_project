@@ -62,14 +62,14 @@ class ProfileController extends Controller
             'education_items.*.level' => ['nullable','string','max:120'],
             'education_items.*.description' => ['nullable','string','max:300'],
             'education_items.*.address' => ['nullable','string','max:120'],
-            'education_items.*.year' => ['nullable','string','max:25','regex:/^\d{4}(?:[–-](?:\d{4}|Present))?$/i'],
+            'education_items.*.year' => ['nullable','string','max:25','regex:/^(?:\d{4}(?:[–-](?:\d{4}|Present))?|Present)$/i'],
             // New structured experience fields (repeater)
             'experience_items' => ['sometimes','array','max:10'],
             'experience_items.*.title' => ['nullable','string','max:100'],
             'experience_items.*.company' => ['nullable','string','max:100'],
             'experience_items.*.description' => ['nullable','string','max:300'],
             'experience_items.*.address' => ['nullable','string','max:120'],
-            'experience_items.*.period' => ['nullable','string','max:25','regex:/^\d{4}(?:[–-](?:\d{4}|Present))?$/i'],
+            'experience_items.*.period' => ['nullable','string','max:25','regex:/^(?:\d{4}(?:[–-](?:\d{4}|Present))?|Present)$/i'],
             // New structured skills
             'skill_items' => ['sometimes','array','max:30'],
             'skill_items.*.name' => ['nullable','string','max:50'],

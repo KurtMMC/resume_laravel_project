@@ -649,6 +649,7 @@ document.addEventListener('click', function(e){
         function isValidYear(val){
             const s = (val || '').trim();
             if (!s) return true; // empty is okay
+            if (/^present$/i.test(s)) return true; // allow "Present" alone
             const m = s.match(/^(\d{4})([–-]((\d{4})|Present))?$/i);
             if (!m) return false;
             const y1 = parseInt(m[1], 10);
@@ -661,7 +662,7 @@ document.addEventListener('click', function(e){
             const ok = isValidYear(year.value);
             year.classList.toggle('invalid', !ok);
             if (hint) {
-                hint.textContent = ok || !year.value ? 'Format: 2018, 2015–2019, or 2020–Present' : 'Enter YYYY, YYYY–YYYY, or YYYY–Present (end ≥ start)';
+                hint.textContent = ok || !year.value ? 'Format: 2018, 2015–2019, 2020–Present, or Present' : 'Enter YYYY, YYYY–YYYY, YYYY–Present, or Present (end ≥ start)';
                 hint.style.color = ok || !year.value ? '' : '#b00020';
             }
         }
@@ -681,7 +682,8 @@ document.addEventListener('click', function(e){
         }
         if (current) {
             current.addEventListener('change', syncCurrentToYear);
-            if (/^[0-9]{4}([–-]Present)$/i.test((year.value||'').trim())) { current.checked = true; }
+            const initVal = (year.value||'').trim();
+            if (/^[0-9]{4}([–-]Present)$/i.test(initVal) || /^Present$/i.test(initVal)) { current.checked = true; }
         }
         // Keyboard reordering on drag handle
         const handle = node.querySelector('.drag-handle');
@@ -802,6 +804,7 @@ document.addEventListener('click', function(e){
         function isValidPeriod(val){
             const s = (val || '').trim();
             if (!s) return true;
+            if (/^present$/i.test(s)) return true; // allow "Present" alone
             const m = s.match(/^(\d{4})([–-]((\d{4})|Present))?$/i);
             if (!m) return false;
             const y1 = parseInt(m[1], 10);
@@ -814,7 +817,7 @@ document.addEventListener('click', function(e){
             const ok = isValidPeriod(period.value);
             period.classList.toggle('invalid', !ok);
             if (hint) {
-                hint.textContent = ok || !period.value ? 'Format: 2018, 2015–2019, or 2020–Present' : 'Enter YYYY, YYYY–YYYY, or YYYY–Present';
+                hint.textContent = ok || !period.value ? 'Format: 2018, 2015–2019, 2020–Present, or Present' : 'Enter YYYY, YYYY–YYYY, YYYY–Present, or Present';
                 hint.style.color = ok || !period.value ? '' : '#b00020';
             }
         }
@@ -835,7 +838,7 @@ document.addEventListener('click', function(e){
         }
         current.addEventListener('change', syncCurrentToPeriod);
         // If initial period already ends with Present, check the toggle
-        if (/^[0-9]{4}([–-]Present)$/i.test((period.value||'').trim())) { current.checked = true; }
+    { const v = (period.value||'').trim(); if (/^[0-9]{4}([–-]Present)$/i.test(v) || /^Present$/i.test(v)) { current.checked = true; } }
         // Keyboard reordering on drag handle
         const handle = node.querySelector('.drag-handle');
         handle.addEventListener('keydown', (e) => {
