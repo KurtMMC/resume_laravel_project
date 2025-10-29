@@ -5,8 +5,17 @@
     <title>Edit Resume</title>
     @vite(['resources/css/site.css'])
     @vite(['resources/js/theme-auto.js'])
+    <style>
+        /* Right-side error rail that does not overlap main content */
+        .error-rail { position: fixed; right: 16px; top: 16px; width: 340px; z-index: 1090; display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 32px); overflow: auto; }
+        .has-errors #edit-resume-form { padding-right: 380px; }
+        @media (max-width: 1024px) {
+            .error-rail { position: static; width: auto; max-height: none; }
+            .has-errors #edit-resume-form { padding-right: 0; }
+        }
+    </style>
 </head>
-<body>
+<body class="{{ $errors->any() ? 'has-errors' : '' }}">
 <!-- Side nav mirrors resume nav -->
 <div class="side-nav" aria-label="Page navigation">
     <a id="nav-back-link" href="{{ route('resume') }}">
@@ -420,13 +429,16 @@
     </script>
 @endif
 @if ($errors->any())
-    <div class="alert alert-danger" style="max-width:900px;margin:0 auto 16px;">
-        <ul style="text-align:left; margin:0; padding-left:18px;">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+    <aside id="error-rail" class="error-rail" aria-live="polite" role="region" aria-label="Form errors">
+        <div class="alert alert-danger" style="margin:0;">
+            <strong>Please fix the following:</strong>
+            <ul style="text-align:left; margin:8px 0 0; padding-left:18px;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </aside>
 @endif
 
 </form>
