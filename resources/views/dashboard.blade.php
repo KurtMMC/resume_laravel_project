@@ -50,6 +50,30 @@
         <div style="margin-top:25px; position:relative; z-index:2;">
             <button type="button" class="btn btn-secondary" onclick="document.getElementById('profile_picture_input').click()">Upload Photo</button>
             <input id="profile_picture_input" type="file" name="profile_picture" accept="image/*" style="display:none;" />
+            @php
+                $resumeUrl = null;
+                if (is_array($profile->attachments)) {
+                    foreach ($profile->attachments as $att) {
+                        $u = is_array($att) ? ($att['url'] ?? null) : (is_string($att) ? $att : null);
+                        if (!$u) continue;
+                        $p = parse_url($u, PHP_URL_PATH) ?: '';
+                        if (strtolower(pathinfo($p, PATHINFO_EXTENSION)) === 'pdf') { $resumeUrl = $u; break; }
+                    }
+                }
+            @endphp
+            <div style="margin-top:10px; display:flex; flex-direction:column; gap:6px; align-items:center;">
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:center;">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('resume_pdf_input').click()" title="Upload or replace your Resume PDF">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+                        Upload Resume PDF
+                    </button>
+                    <input id="resume_pdf_input" type="file" name="resume_pdf" accept="application/pdf" style="display:none;" />
+                    <span id="resume-pdf-filename" style="font-size:0.9rem; color:#64748b;"></span>
+                </div>
+                @if($resumeUrl)
+                    <small>Current: <a href="{{ $resumeUrl }}" target="_blank" rel="noopener">Resume PDF</a></small>
+                @endif
+            </div>
         </div>
     </div>
     <div class="about-info" style="flex:1 1 auto;">
@@ -609,6 +633,17 @@ document.addEventListener('click', function(e){
         if (fallback) fallback.style.display = 'none';
         // Revoke later to free memory
         setTimeout(() => URL.revokeObjectURL(url), 30000);
+    });
+})();
+
+// Show selected Resume PDF file name
+(function(){
+    const input = document.getElementById('resume_pdf_input');
+    const label = document.getElementById('resume-pdf-filename');
+    if (!input || !label) return;
+    input.addEventListener('change', function(){
+        const file = this.files && this.files[0];
+        label.textContent = file ? `Selected: ${file.name}` : '';
     });
 })();
 

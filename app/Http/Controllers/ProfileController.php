@@ -52,6 +52,7 @@ class ProfileController extends Controller
             'email' => ['nullable','email','max:254'],
             'slug' => ['nullable','string','max:60','regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
             'profile_picture' => ['nullable','image','max:5120'], // up to ~5MB
+            'resume_pdf' => ['nullable','mimes:pdf','max:20480'], // up to ~20MB
             // Textareas submit strings; we'll normalize below
             'experiences' => ['nullable','string'],
             'education' => ['nullable','string'],
@@ -259,6 +260,58 @@ class ProfileController extends Controller
                 try { \Illuminate\Support\Facades\Storage::delete($old); } catch (\Throwable $e) {}
             }
             $data['profile_picture'] = $publicPath;
+        }
+
+        // Handle Resume PDF upload -> stored under storage/resumes and reflected in attachments
+        if ($request->hasFile('resume_pdf')) {
+            $file = $request->file('resume_pdf');
+            $filename = 'resume_' . $user->id . '_' . time() . '.pdf';
+            $path = $file->storeAs('public/resumes', $filename);
+            $publicPath = str_replace('public/', 'storage/', $path);
+
+            // Start from attachments built earlier this request, else existing profile attachments
+            $attachments = [];
+            if (array_key_exists('attachments', $data) && is_array($data['attachments'])) {
+                $attachments = $data['attachments'];
+            } elseif (is_array($profile->attachments)) {
+                $attachments = $profile->attachments;
+            }
+
+            $replaced = false;
+            // Replace existing stored resume (under storage/resumes) if found
+            foreach ($attachments as $idx => $att) {
+                $u = is_array($att) ? ($att['url'] ?? null) : (is_string($att) ? $att : null);
+                if (!$u) continue;
+                $p = parse_url($u, PHP_URL_PATH) ?: '';
+                if (str_contains($p, '/storage/resumes/')) {
+                    // Delete previous stored file
+                    $old = 'public/resumes/' . basename($p);
+                    try { \Illuminate\Support\Facades\Storage::delete($old); } catch (\Throwable $e) {}
+                    $attachments[$idx] = ['label' => 'Resume (PDF)', 'url' => asset($publicPath)];
+                    $replaced = true;
+                    break;
+                }
+            }
+
+            if (!$replaced) {
+                // If an attachment with .pdf exists, update it; else append a new one
+                $updated = false;
+                foreach ($attachments as $i => $att) {
+                    $u = is_array($att) ? ($att['url'] ?? null) : (is_string($att) ? $att : null);
+                    if (!$u) continue;
+                    $p = parse_url($u, PHP_URL_PATH) ?: '';
+                    if (strtolower(pathinfo($p, PATHINFO_EXTENSION)) === 'pdf') {
+                        $attachments[$i] = ['label' => 'Resume (PDF)', 'url' => asset($publicPath)];
+                        $updated = true;
+                        break;
+                    }
+                }
+                if (!$updated) {
+                    $attachments[] = ['label' => 'Resume (PDF)', 'url' => asset($publicPath)];
+                }
+            }
+
+            $data['attachments'] = array_values($attachments);
         }
 
         $profile->fill(array_merge($data, [ 'is_public' => true ]))->save();
