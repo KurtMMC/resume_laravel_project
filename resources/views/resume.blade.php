@@ -200,14 +200,7 @@
                 }
             }
         }
-        // Fallback: include built-in resume PDF if it exists in public/
-        try {
-            if (function_exists('public_path') && file_exists(public_path('resume.pdf'))) {
-                $attachmentsList[] = ['label' => 'Resume (PDF)', 'url' => asset('resume.pdf')];
-            }
-        } catch (Throwable $e) {
-            // ignore filesystem issues in view
-        }
+        // No fallback; only show attachments provided from the profile/editor
     @endphp
     @if(count($attachmentsList))
         <ul class="attachments" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
