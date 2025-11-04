@@ -79,14 +79,14 @@
     </div>
     <div class="about-info" style="flex:1 1 auto;">
         <h1>
-            <input type="text" name="name" value="{{ old('name', $profile->name) }}" placeholder="Your Name" style="width:100%; max-width:420px;" maxlength="80" />
+            <input type="text" name="name" value="{{ old('name', $profile->name) }}" placeholder="Your Name" style="width:40%; max-width:420px;" maxlength="80" />
         </h1>
         <p><strong>
             <input type="text" name="title" value="{{ old('title', $profile->title) }}" placeholder="Your Title (e.g. Full-Stack Developer)" style="width:100%; max-width:170px;" maxlength="100" />
         </strong></p>
         
         <p>
-            <input type="text" name="address" value="{{ old('address', $profile->address) }}" placeholder="City, Country" style="width:100%; max-width:420px;" maxlength="120" />
+            <input type="text" name="address" value="{{ old('address', $profile->address) }}" placeholder="City, Country" style="width:40%; max-width:420px;" maxlength="120" />
             <br>
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v2a2 2 0 0 1-2.2 2c-9.2-1-16-7.8-17-17A2 2 0 0 1 4.8 2h2a2 2 0 0 1 2 1.7c.1.9.3 1.8.7 2.7.2.5.1 1.1-.3 1.5L8 9.8a15 15 0 0 0 6.2 6.2l1.9-1.2c.5-.3 1-.4 1.5-.3 1 .3 1.9.6 2.8.7a2 2 0 0 1 1.6 1.6z"></path></svg>
             <input type="text" name="phone" value="{{ old('phone', $profile->phone) }}" placeholder="Phone" style="max-width:240px;" maxlength="24" />
