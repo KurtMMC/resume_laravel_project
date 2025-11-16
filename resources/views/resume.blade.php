@@ -65,15 +65,10 @@
     </p>
     @if($resumePdfUrl)
     <div class="hero-cta" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <button type="button" id="download-pdf-btn" class="btn btn-primary btn-download">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
-            Download PDF
-        </button>
         <a href="{{ $resumePdfUrl }}" target="_blank" rel="noopener" class="btn btn-secondary" title="Open in a new tab">
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7"></path><path d="M10 14L21 3"></path><path d="M21 10v11H3V3h11"></path></svg>
             View Resume
         </a>
-        <a href="{{ $resumePdfUrl }}" download id="download-pdf-link" aria-hidden="true" tabindex="-1" style="display:none"></a>
     </div>
     @endif
 </header>
@@ -564,16 +559,7 @@ function toggleDarkMode() {
     }
 })();
 
-// Download PDF button triggers hidden download link
-(function(){
-    const btn = document.getElementById('download-pdf-btn');
-    const a = document.getElementById('download-pdf-link');
-    if (btn && a) {
-        btn.addEventListener('click', () => {
-            try { a.click(); } catch(e) { window.location.href = a.getAttribute('href'); }
-        });
-    }
-})();
+// (Download button removed)
 </script>
 
 <!-- Full-screen loading overlay for logout and global transitions -->
